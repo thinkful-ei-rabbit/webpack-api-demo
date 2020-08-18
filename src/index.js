@@ -12,19 +12,20 @@ function main() {
         let item = $("#item").val();
         let params = {
             name: item
-        };        
+        };
 
         let queryString = $.param(params);
         console.log(queryString);
 
-       
-        api.addToList(thinkfulApi,{method:"POST", headers:{"Content-Type":'application/json'}, body:JSON.stringify(params)}).then(function (data) {
-            console.log("Added",data);
+
+        api.addToList(thinkfulApi, { method: "POST", headers: { "Content-Type": 'application/json' }, body: JSON.stringify(params) }).then(function (data) {
+            console.log("Added", data);
+            api.getListItems(`${thinkfulApi}?${params}`).then(function (data) {
+                render(data);
+            });
         });
 
-        api.getListItems(apiRequest).then(function (data) {
-            console.log(data);
-        });
+
     })
 
 
@@ -33,12 +34,9 @@ function main() {
     function render(jsonData) {
         let htmlTemplate = [];
         console.log(jsonData);
-        for (let i = 0; i < jsonData.items.length; i++) {
-            let video = jsonData.items[i].snippet;
+        for (let i = 0; i < jsonData.length; i++) {
             htmlTemplate.push(`
-                <h3><a href="https://www.youtube.com/watch?v=${jsonData.items[i].id.videoId}">${video.title}</a></h3>
-                <p>${video.description}</p>
-                <img src="${video.thumbnails.default.url}" alt="">
+                <h3>${jsonData[i].name}</h3>
             `)
         }
         $(".results").html(htmlTemplate);
